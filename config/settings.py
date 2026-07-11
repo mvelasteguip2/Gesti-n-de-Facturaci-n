@@ -28,6 +28,7 @@ LOCAL_APPS = [
     "core",
     "security",
     "catalog",
+    "customers",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -67,7 +68,7 @@ DATABASES = {
     "default": {
         "ENGINE": config("DB_ENGINE", default="django.db.backends.mysql"),
         "NAME": config("DB_NAME", default="ventas_db_local"),
-        "USER": config("DB_USER", default="root"),
+        "USER": config("DB_USER", default=""),
         "PASSWORD": config("DB_PASSWORD", default=""),
         "HOST": config("DB_HOST", default="localhost"),
         "PORT": config("DB_PORT", default="3306"),
@@ -95,6 +96,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'core', 'static'),
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # CONFIGURACIÓN CORRECTA DE ARCHIVOS MULTIMEDIA (IMÁGENES)
 MEDIA_URL = '/media/'

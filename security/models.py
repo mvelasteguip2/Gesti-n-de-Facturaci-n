@@ -38,6 +38,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+    def soft_delete(self):
+        """Desactiva el usuario sin eliminar su historial de la base de datos."""
+        self.is_active = False
+        self.save(update_fields=["is_active", "updated_at"])
+
     @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"

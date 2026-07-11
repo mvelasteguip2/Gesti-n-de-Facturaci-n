@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView, View
 from django.views.generic.edit import DeleteView
@@ -112,8 +112,6 @@ class UserCreateView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy('security:user_list')
 
     def form_valid(self, form):
-        self.object = form.save()
-        form.save_m2m()
         messages.success(self.request, 'Usuario creado correctamente.')
         return super().form_valid(form)
 
@@ -127,8 +125,6 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
     context_object_name = 'user_obj'
 
     def form_valid(self, form):
-        self.object = form.save()
-        form.save_m2m()
         messages.success(self.request, 'Usuario actualizado correctamente.')
         return super().form_valid(form)
 
@@ -137,7 +133,7 @@ class UserDeactivateView(PermissionRequiredMixin, View):
     permission_required = 'security.delete_user'
 
     def post(self, request, pk):
-        user = User.objects.get(pk=pk)
+        user = get_object_or_404(User.objects, pk=pk)
         if user == request.user:
             messages.error(request, 'No puedes desactivarte a ti mismo.')
             return redirect('security:user_list')
@@ -146,7 +142,8 @@ class UserDeactivateView(PermissionRequiredMixin, View):
         return redirect('security:user_list')
 
 
-class GroupListView(ListView):
+class GroupListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'auth.view_group'
     model = Group
     template_name = 'security/group_list.html'
     context_object_name = 'group_list'
@@ -198,7 +195,7 @@ class GroupUpdateView(PermissionRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     template_name = 'security/profile.html'
 
     def get(self, request):

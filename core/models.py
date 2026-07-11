@@ -2,9 +2,14 @@ from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils import timezone
 
-class SoftDeleteManager(models.Manager):
+class SoftDeleteQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
+
+class SoftDeleteManager(models.Manager.from_queryset(SoftDeleteQuerySet)):
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True)
+        return super().get_queryset().active()
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)

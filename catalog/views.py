@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, ListView, UpdateView
@@ -15,7 +15,7 @@ class CategoriaListView(PermissionRequiredMixin, ListView):
     template_name = 'catalog/categoria_list.html'
 
     def get_queryset(self):
-        qs = Categoria.all_objects.all()
+        qs = Categoria.objects.all()
         q = self.request.GET.get('q', '').strip()
         if q:
             qs = qs.filter(Q(nombre__icontains=q) | Q(descripcion__icontains=q))
@@ -47,7 +47,7 @@ class CategoriaDeactivateView(PermissionRequiredMixin, View):
     permission_required = 'catalog.delete_categoria'
 
     def post(self, request, pk):
-        cat = Categoria.all_objects.get(pk=pk)
+        cat = get_object_or_404(Categoria.objects, pk=pk)
         if cat.productos.filter(is_active=True).exists():
             messages.error(request, 'No se puede desactivar: tiene productos activos.')
         else:
@@ -62,7 +62,7 @@ class ProductoListView(PermissionRequiredMixin, ListView):
     template_name = 'catalog/producto_list.html'
 
     def get_queryset(self):
-        qs = Producto.all_objects.select_related('categoria').all()
+        qs = Producto.objects.select_related('categoria').all()
         q = self.request.GET.get('q', '').strip()
         cat = self.request.GET.get('categoria', '').strip()
         if q:
@@ -102,7 +102,7 @@ class ProductoDeactivateView(PermissionRequiredMixin, View):
     permission_required = 'catalog.delete_producto'
 
     def post(self, request, pk):
-        prod = Producto.all_objects.get(pk=pk)
+        prod = get_object_or_404(Producto.objects, pk=pk)
         prod.soft_delete()
         messages.success(request, f'Producto "{prod.nombre}" desactivado.')
         return redirect('catalog:producto_list')

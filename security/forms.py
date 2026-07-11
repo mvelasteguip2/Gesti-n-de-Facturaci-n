@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.password_validation import validate_password
 from .models import User
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(
         label='Contraseña',
-        widget=forms.PasswordInput(render_value=True, attrs={'class': 'form-control'}),
+        widget=forms.PasswordInput(render_value=False, attrs={'class': 'form-control'}),
         required=False,
         help_text='Dejar vacío para mantener la actual al editar',
     )
@@ -29,6 +30,18 @@ class UserForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'groups': forms.SelectMultiple(attrs={'class': 'form-select'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields['password'].required = True
+            self.fields['password'].help_text = 'La contraseña es obligatoria para crear el usuario.'
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if password:
+            validate_password(password, self.instance)
+        return password
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -109,16 +122,19 @@ class ProfileForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User.all_objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError('Este email ya está registrado.')
         return email
 
     def clean(self):
-        p1 = self.cleaned_data.get('password1')
-        p2 = self.cleaned_data.get('password2')
+        cleaned_data = super().clean()
+        p1 = cleaned_data.get('password1')
+        p2 = cleaned_data.get('password2')
         if p1 and p1 != p2:
             raise forms.ValidationError('Las contraseñas no coinciden.')
-        return self.cleaned_data
+        if p1:
+            validate_password(p1, self.instance)
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)

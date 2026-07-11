@@ -5,12 +5,12 @@ def seed_menu(apps, schema_editor):
     modules = [
         {'name': 'Dashboard', 'icon': 'bi-speedometer2', 'url_name': 'home', 'children': []},
         {'name': 'Seguridad', 'icon': 'bi-shield-lock', 'url_name': '', 'children': [
-            {'name': 'Usuarios', 'icon': 'bi-people', 'url_name': ''},
-            {'name': 'Roles', 'icon': 'bi-person-badge', 'url_name': ''},
+            {'name': 'Usuarios', 'icon': 'bi-people', 'url_name': 'security:user_list'},
+            {'name': 'Roles', 'icon': 'bi-person-badge', 'url_name': 'security:group_list'},
         ]},
         {'name': 'Cat\u00e1logo', 'icon': 'bi-box', 'url_name': '', 'children': [
-            {'name': 'Categor\u00edas', 'icon': 'bi-tags', 'url_name': ''},
-            {'name': 'Productos', 'icon': 'bi-box-seam', 'url_name': ''},
+            {'name': 'Categor\u00edas', 'icon': 'bi-tags', 'url_name': 'catalog:categoria_list'},
+            {'name': 'Productos', 'icon': 'bi-box-seam', 'url_name': 'catalog:producto_list'},
         ]},
         {'name': 'Clientes', 'icon': 'bi-people', 'url_name': '', 'children': [
             {'name': 'Listado de Clientes', 'icon': 'bi-list-ul', 'url_name': ''},
