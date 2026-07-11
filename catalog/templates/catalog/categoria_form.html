@@ -1,0 +1,29 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}SIF — Categoría{% endblock %}
+{% block page_title %}{% if object %}Editar Categoría{% else %}Nueva Categoría{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_nombre" class="form-label">Nombre de la Categoría</label>
+                <input type="text" name="nombre" id="id_nombre" class="form-control" value="{{ form.nombre.value|default:'' }}" required>
+                {% if form.nombre.errors %}
+                    <div class="text-danger small">{{ form.nombre.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="id_descripcion" class="form-label">Descripción</label>
+                <textarea name="descripcion" id="id_descripcion" class="form-control" rows="3">{% if form.descripcion.value %}{{ form.descripcion.value }}{% endif %}</textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'catalog:categoria_list' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
