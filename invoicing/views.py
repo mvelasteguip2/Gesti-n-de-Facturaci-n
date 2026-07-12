@@ -1,7 +1,8 @@
 import json
+import logging
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -15,6 +16,9 @@ from customers.models import Cliente
 from .forms import FacturaForm
 from .models import Factura
 from .services import FacturaService
+
+
+logger = logging.getLogger(__name__)
 
 
 class InvoiceListView(PermissionRequiredMixin, ListView):
@@ -70,8 +74,9 @@ class InvoiceCreateView(LoginRequiredMixin, PermissionRequiredMixin, View):
             messages.error(request, 'Detalle de productos invalido.')
         except ValidationError as exc:
             messages.error(request, '; '.join(exc.messages))
-        except Exception as exc:
-            messages.error(request, str(exc))
+        except Exception:
+            logger.exception('Error inesperado al crear una factura.')
+            messages.error(request, 'No fue posible crear la factura. Intente nuevamente.')
         return render(request, self.template_name, {'form': form})
 
 
@@ -99,12 +104,14 @@ class InvoiceAnnulView(PermissionRequiredMixin, View):
             messages.success(request, f'Factura {factura.numero} anulada. Stock restaurado.')
         except ValidationError as exc:
             messages.error(request, '; '.join(exc.messages))
-        except Exception as exc:
-            messages.error(request, str(exc))
+        except Exception:
+            logger.exception('Error inesperado al anular una factura.')
+            messages.error(request, 'No fue posible anular la factura. Intente nuevamente.')
         return redirect('invoicing:invoice_list')
 
 
 @login_required
+@permission_required('invoicing.add_factura', raise_exception=True)
 def api_productos(request):
     q = request.GET.get('q', '').strip()
     qs = Producto.objects.filter(is_active=True, stock__gt=0)
@@ -115,6 +122,7 @@ def api_productos(request):
 
 
 @login_required
+@permission_required('invoicing.add_factura', raise_exception=True)
 def api_clientes(request):
     q = request.GET.get('q', '').strip()
     qs = Cliente.objects.filter(is_active=True)

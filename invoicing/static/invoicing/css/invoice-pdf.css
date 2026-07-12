@@ -1,0 +1,36 @@
+@page {
+  size: A4;
+  margin: 1.8cm 1.3cm;
+  @bottom-center {
+    content: "Página " counter(page) " de " counter(pages);
+    color: #64748b;
+    font-size: 8px;
+  }
+}
+
+body { color: #1e293b; font-family: Arial, Helvetica, sans-serif; font-size: 9px; line-height: 1.45; }
+.brand-header { background: #1e293b; color: #fff; margin-bottom: 16px; padding: 16px 20px; }
+.brand-header h1 { font-size: 18px; margin: 0 0 3px; }
+.brand-sub { font-size: 10px; letter-spacing: 1px; }
+.brand-meta { color: #cbd5e1; font-size: 8px; margin-top: 4px; }
+.report-title { border-bottom: 2px solid #e2e8f0; margin-bottom: 14px; padding-bottom: 8px; text-align: center; }
+.report-title h2 { font-size: 16px; margin: 0 0 3px; }
+.period { color: #64748b; font-size: 10px; margin: 0; }
+.summary-grid table, table.data { border-collapse: collapse; width: 100%; }
+.summary-grid td { padding: 3px; width: 25%; }
+.summary-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 4px; text-align: center; }
+.summary-card .label { color: #64748b; font-size: 7px; font-weight: bold; text-transform: uppercase; }
+.summary-card .value { color: #1e293b; font-size: 14px; font-weight: bold; margin-top: 3px; }
+.card-primary .value { color: #4e73df; }.card-success .value { color: #059669; }
+.card-warning .value { color: #d97706; }.card-danger .value { color: #dc2626; }
+.section-title { border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: bold; margin: 14px 0 6px; padding-bottom: 4px; text-transform: uppercase; }
+table.data { border: 1px solid #94a3b8; margin-bottom: 10px; }
+table.data th { background: #1e293b; border: 1px solid #334155; color: #fff; font-size: 8px; padding: 5px; text-transform: uppercase; }
+table.data td { border: 1px solid #cbd5e1; padding: 4px; vertical-align: middle; }
+table.data tr:nth-child(even) { background: #f8fafc; }
+.text-end { text-align: right; }.text-center { text-align: center; }.fw-bold { font-weight: bold; }
+.badge { font-size: 7px; font-weight: bold; padding: 2px 5px; }.badge-success { color: #065f46; }.badge-danger { color: #991b1b; }
+.totals-box { background: #f8fafc; border: 1px solid #e2e8f0; margin-top: 12px; padding: 9px 14px; text-align: right; }
+.totals-box .line { color: #475569; padding: 2px 0; }.totals-box .total { border-top: 2px solid #4e73df; color: #1e293b; font-size: 13px; font-weight: bold; margin-top: 4px; padding-top: 5px; }
+.report-footer { border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 7px; margin-top: 18px; padding-top: 7px; text-align: center; }
+.report-footer p { margin: 1px 0; }.footer-brand { color: #4e73df; font-size: 9px; font-weight: bold; }

@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, time, timedelta, timezone as dt_timezone
+from datetime import datetime, time, timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, Sum
@@ -40,7 +40,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         clientes = Cliente.objects.aggregate(total=Count('id'))
 
         stock_bajo = Producto.objects.filter(
-            stock__lt=F('stock_minimo'),
+            stock__lte=F('stock_minimo'),
         ).aggregate(total=Count('id'))
 
         ventas_por_dia = Factura.objects.filter(
@@ -48,7 +48,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             fecha_emision__lt=fin_rango,
             is_active=True,
         ).annotate(
-            dia=TruncDate('fecha_emision', tzinfo=dt_timezone.utc),
+            dia=TruncDate('fecha_emision', tzinfo=timezone.get_current_timezone()),
         ).values('dia').annotate(
             total=Sum('total'),
         ).order_by('dia')

@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -31,10 +31,16 @@ class FacturaService:
 
         for item in productos_data:
             producto_id = item.get('producto_id')
-            cantidad = int(item.get('cantidad') or 0)
-            descuento_pct = Decimal(str(item.get('descuento_pct', 0) or 0))
+            try:
+                cantidad = int(item.get('cantidad') or 0)
+                descuento_pct = Decimal(str(item.get('descuento_pct', 0) or 0))
+            except (TypeError, ValueError, InvalidOperation):
+                raise ValidationError('El detalle de productos contiene valores inv\u00e1lidos.')
 
-            prod = Producto.objects.select_for_update().get(pk=producto_id, is_active=True)
+            try:
+                prod = Producto.objects.select_for_update().get(pk=producto_id, is_active=True)
+            except Producto.DoesNotExist:
+                raise ValidationError('Uno de los productos seleccionados no est\u00e1 disponible.')
 
             if cantidad <= 0:
                 raise ValidationError(f'Cantidad invalida para {prod.nombre}')

@@ -1,0 +1,21 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Reportes{% endblock %}
+{% block page_title %}Reportes{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-12"><p class="text-muted">Genere reportes profesionales en PDF con los datos del sistema.</p></div>
+  <div class="col-12 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body text-center p-4">
+    <i class="bi bi-file-earmark-pdf display-5 text-danger d-block mb-3"></i>
+    <h5 class="fw-bold">Cierre del Día</h5><p class="small text-muted mb-3">Resumen de ventas, métodos de pago y facturas emitidas o anuladas durante el día actual.</p>
+    <a href="{% url 'invoicing:daily_close_pdf' %}" class="btn btn-danger" target="_blank"><i class="bi bi-download me-1"></i>Generar PDF</a>
+  </div></div></div>
+  <div class="col-12 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body text-center p-4">
+    <i class="bi bi-list-check display-5 text-success d-block mb-3"></i>
+    <h5 class="fw-bold">Listado de Facturas</h5><p class="small text-muted mb-3">Exporte facturas de un período específico con subtotales, IVA y total general.</p>
+    <form method="get" action="{% url 'invoicing:invoice_list_pdf' %}" target="_blank"><div class="row g-2 mb-3">
+      <div class="col-6"><label for="desde" class="form-label small text-muted">Desde</label><input id="desde" type="date" name="desde" class="form-control form-control-sm" value="{{ today|date:'Y-m-01' }}"></div>
+      <div class="col-6"><label for="hasta" class="form-label small text-muted">Hasta</label><input id="hasta" type="date" name="hasta" class="form-control form-control-sm" value="{{ today|date:'Y-m-d' }}"></div>
+    </div><button type="submit" class="btn btn-success w-100"><i class="bi bi-download me-1"></i>Generar PDF</button></form>
+  </div></div></div>
+</div>
+{% endblock %}

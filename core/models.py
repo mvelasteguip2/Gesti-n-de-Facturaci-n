@@ -46,15 +46,18 @@ class MenuItem(BaseModel):
     @property
     def is_submodule(self): return self.parent is not None
     def _check_permissions(self, user):
-        if not self.permissions.exists(): return True
-        return user.has_perms([f'{p.content_type.app_label}.{p.codename}' for p in self.permissions.select_related('content_type').only('codename', 'content_type__app_label')])
+        permissions = list(self.permissions.all())
+        if not permissions:
+            return True
+        return user.has_perms([f'{p.content_type.app_label}.{p.codename}' for p in permissions])
     def has_access(self, user):
-        if not self.is_active: return False
+        if not user.is_authenticated or not self.is_active: return False
         if self.is_module:
-            children = MenuItem.all_objects.filter(parent=self, is_active=True)
-            if children.exists(): return any(child.has_access(user) for child in children)
+            children = [child for child in self.children.all() if child.is_active]
+            if children:
+                return any(child.has_access(user) for child in children)
         return self._check_permissions(user)
     def accessible_children(self, user):
         if not self.is_module: return MenuItem.objects.none()
-        children = MenuItem.all_objects.filter(parent=self, is_active=True).order_by('order')
+        children = [child for child in self.children.all() if child.is_active]
         return [child for child in children if child.has_access(user)]

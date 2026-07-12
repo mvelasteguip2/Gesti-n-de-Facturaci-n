@@ -24,12 +24,20 @@
     _close() { this.sidebar?.classList.remove('open'); this.overlay?.classList.remove('active'); }
     _bindModuleToggle() {
       document.querySelectorAll('.module-header').forEach(el => {
-        el.addEventListener('click', (e) => {
+        const toggle = (e) => {
           e.stopPropagation();
           const children = el.nextElementSibling;
           if (!children?.classList.contains('module-children')) return;
           children.classList.toggle('open');
           el.classList.toggle('open');
+          el.setAttribute('aria-expanded', el.classList.contains('open'));
+        };
+        el.addEventListener('click', toggle);
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggle(e);
+          }
         });
       });
     }
